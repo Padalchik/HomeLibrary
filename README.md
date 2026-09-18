@@ -14,7 +14,7 @@
 docker compose up --build
 ```
 
-Приложение будет доступно по адресу <http://localhost:8080>. Проверка состояния: <http://localhost:8080/health>.
+Приложение будет доступно по адресу <http://localhost:18080>. Проверка состояния: <http://localhost:18080/health>.
 
 ## Локальная отладка
 
