@@ -1,0 +1,49 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:-HomeLibrary_dev_2026!}
+    ports:
+      - "${MSSQL_PORT:-1433}:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$$MSSQL_SA_PASSWORD" -C -Q "SELECT 1" -b -o /dev/null
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+  migrations:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SQLSERVER_HOST: sqlserver
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:-HomeLibrary_dev_2026!}
+    volumes:
+      - ./database:/database:ro
+    entrypoint: ["/bin/bash", "/database/migrate.sh"]
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    restart: "no"
+
+  web:
+    build:
+      context: .
+      dockerfile: src/HomeLibrary.Web/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 8080
+      ConnectionStrings__DefaultConnection: Server=sqlserver,1433;Database=HomeLibrary;User Id=sa;Password=${MSSQL_SA_PASSWORD:-HomeLibrary_dev_2026!};Encrypt=True;TrustServerCertificate=True
+    ports:
+      - "${HOMELIBRARY_PORT:-18080}:8080"
+    depends_on:
+      migrations:
+        condition: service_completed_successfully
+
+volumes:
+  sqlserver-data:

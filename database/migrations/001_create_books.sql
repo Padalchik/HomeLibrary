@@ -1,0 +1,20 @@
+SET NOCOUNT ON;
+SET XACT_ABORT ON;
+
+BEGIN TRANSACTION;
+
+IF OBJECT_ID(N'dbo.Book', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Book
+    (
+        Id INT IDENTITY(1, 1) NOT NULL CONSTRAINT PK_Book PRIMARY KEY,
+        Title NVARCHAR(300) NOT NULL,
+        Author NVARCHAR(200) NOT NULL,
+        PublicationYear INT NOT NULL,
+        TableOfContents XML NOT NULL,
+        CreatedAt DATETIME2 NOT NULL,
+        UpdatedAt DATETIME2 NOT NULL
+    );
+END;
+
+COMMIT TRANSACTION;
