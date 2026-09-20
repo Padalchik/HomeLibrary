@@ -12,16 +12,20 @@ public sealed class BooksController(
     ITableOfContentsFormatter tableOfContentsFormatter) : Controller
 {
     [HttpGet("")]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string? search)
     {
-        var books = await bookService.GetAllAsync();
-        var model = books.Select(book => new BookListItemViewModel
+        var books = await bookService.SearchAsync(search);
+        var model = new BookIndexViewModel
         {
-            Id = book.Id,
-            Title = book.Title,
-            Author = book.Author,
-            PublicationYear = book.PublicationYear
-        }).ToArray();
+            Search = search,
+            Books = books.Select(book => new BookListItemViewModel
+            {
+                Id = book.Id,
+                Title = book.Title,
+                Author = book.Author,
+                PublicationYear = book.PublicationYear
+            }).ToArray()
+        };
 
         return View(model);
     }

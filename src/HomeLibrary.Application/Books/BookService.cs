@@ -6,6 +6,9 @@ public sealed class BookService(IBookRepository repository) : IBookService
 {
     public Task<IReadOnlyCollection<Book>> GetAllAsync() => repository.SearchAsync(null);
 
+    public Task<IReadOnlyCollection<Book>> SearchAsync(string? search) =>
+        repository.SearchAsync(search);
+
     public Task<Book?> GetByIdAsync(int id) => repository.GetByIdAsync(id);
 
     public Task<int> CreateAsync(CreateBookRequest request)

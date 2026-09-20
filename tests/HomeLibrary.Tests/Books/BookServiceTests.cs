@@ -152,6 +152,21 @@ public sealed class BookServiceTests
     }
 
     [Fact]
+    public async Task SearchAsync_PassesSearchToRepositoryAndReturnsItsResult()
+    {
+        const string search = "Clean";
+        IReadOnlyCollection<Book> books = [CreateBook(1), CreateBook(2)];
+        var repository = new FakeBookRepository { Books = books };
+        var service = new BookService(repository);
+
+        var result = await service.SearchAsync(search);
+
+        Assert.Same(books, result);
+        Assert.True(repository.SearchWasCalled);
+        Assert.Equal(search, repository.LastSearch);
+    }
+
+    [Fact]
     public async Task DeleteAsync_WhenBookExists_CallsRepository()
     {
         var repository = new FakeBookRepository { Book = CreateBook(9) };

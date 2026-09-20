@@ -1,4 +1,4 @@
-@model IReadOnlyCollection<HomeLibrary.Web.Models.Books.BookListItemViewModel>
+@model HomeLibrary.Web.Models.Books.BookIndexViewModel
 @{
     ViewData["Title"] = "Книги";
 }
@@ -8,9 +8,25 @@
     <a class="button" asp-action="Create">Добавить книгу</a>
 </div>
 
-@if (Model.Count == 0)
+<form class="search-form" asp-action="Index" method="get">
+    <div class="search-field">
+        <label for="search">Поиск по названию, автору или оглавлению</label>
+        <input id="search" name="search" type="search" value="@Model.Search" />
+    </div>
+    <button class="button" type="submit">Найти</button>
+    @if (!string.IsNullOrWhiteSpace(Model.Search))
+    {
+        <a class="button secondary" asp-action="Index">Сбросить</a>
+    }
+</form>
+
+@if (Model.Books.Count == 0 && string.IsNullOrWhiteSpace(Model.Search))
 {
     <p class="empty-state">В библиотеке пока нет книг.</p>
+}
+else if (Model.Books.Count == 0)
+{
+    <p class="empty-state">По вашему запросу ничего не найдено.</p>
 }
 else
 {
@@ -25,7 +41,7 @@ else
                 </tr>
             </thead>
             <tbody>
-            @foreach (var book in Model)
+            @foreach (var book in Model.Books)
             {
                 <tr>
                     <td>@book.Title</td>

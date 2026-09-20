@@ -41,9 +41,14 @@ th { background: #eee; }
 .wysiwyg-editor { min-height: 14rem; background: #fff; }
 .table-of-contents-editor .ql-toolbar { background: #fff; }
 .empty-state { padding: 1.5rem; background: #fff; border: 1px solid #ddd; }
+.search-form { display: flex; align-items: flex-end; gap: .75rem; margin-bottom: 1.5rem; }
+.search-field { flex: 1; }
+.search-field label { display: block; margin-bottom: .3rem; font-weight: 600; }
+.search-field input { width: 100%; padding: .6rem; border: 1px solid #aaa; border-radius: .25rem; font: inherit; }
 
 @media (max-width: 640px) {
     .page-heading { align-items: flex-start; flex-direction: column; }
+    .search-form { align-items: stretch; flex-direction: column; }
     .book-details { grid-template-columns: 1fr; }
     .book-details dd { margin-bottom: .6rem; }
 }
