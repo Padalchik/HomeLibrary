@@ -1,5 +1,6 @@
 using System.Xml;
 using System.Xml.Linq;
+using AngleSharp.Html.Parser;
 using Ganss.Xss;
 
 namespace HomeLibrary.Web.Services;
@@ -30,6 +31,12 @@ public sealed class TableOfContentsFormatter : ITableOfContentsFormatter
         ArgumentNullException.ThrowIfNull(html);
 
         var sanitizedHtml = sanitizer.Sanitize(html);
+        var document = new HtmlParser().ParseDocument(sanitizedHtml);
+        if (string.IsNullOrWhiteSpace(document.Body?.TextContent))
+        {
+            throw new ArgumentException("Оглавление не может быть пустым.", nameof(html));
+        }
+
         return new XElement(RootElementName, sanitizedHtml).ToString(SaveOptions.DisableFormatting);
     }
 

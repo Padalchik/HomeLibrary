@@ -11,6 +11,8 @@ public sealed class BooksController(
     IBookService bookService,
     ITableOfContentsFormatter tableOfContentsFormatter) : Controller
 {
+    private const string EmptyTableOfContentsError = "Оглавление не может быть пустым.";
+
     [HttpGet("")]
     public async Task<IActionResult> Index(string? search)
     {
@@ -49,11 +51,16 @@ public sealed class BooksController(
             return View(model);
         }
 
+        if (!TryFormatTableOfContents(model.TableOfContentsHtml, out var tableOfContents))
+        {
+            return View(model);
+        }
+
         var id = await bookService.CreateAsync(new CreateBookRequest(
             model.Title,
             model.Author,
             model.PublicationYear,
-            tableOfContentsFormatter.ToXml(model.TableOfContentsHtml)));
+            tableOfContents));
 
         return RedirectToAction(nameof(Details), new { id });
     }
@@ -91,12 +98,17 @@ public sealed class BooksController(
             return View(model);
         }
 
+        if (!TryFormatTableOfContents(model.TableOfContentsHtml, out var tableOfContents))
+        {
+            return View(model);
+        }
+
         var updated = await bookService.UpdateAsync(new UpdateBookRequest(
             model.Id,
             model.Title,
             model.Author,
             model.PublicationYear,
-            tableOfContentsFormatter.ToXml(model.TableOfContentsHtml)));
+            tableOfContents));
 
         return updated
             ? RedirectToAction(nameof(Details), new { id })
@@ -121,4 +133,19 @@ public sealed class BooksController(
         CreatedAt = book.CreatedAt,
         UpdatedAt = book.UpdatedAt
     };
+
+    private bool TryFormatTableOfContents(string html, out string xml)
+    {
+        try
+        {
+            xml = tableOfContentsFormatter.ToXml(html);
+            return true;
+        }
+        catch (ArgumentException)
+        {
+            ModelState.AddModelError(nameof(BookCreateViewModel.TableOfContentsHtml), EmptyTableOfContentsError);
+            xml = string.Empty;
+            return false;
+        }
+    }
 }

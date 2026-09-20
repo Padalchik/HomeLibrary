@@ -54,6 +54,27 @@ public sealed class TableOfContentsFormatterTests
         Assert.DoesNotContain("script", html, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Theory]
+    [InlineData("<script>alert(1)</script>")]
+    [InlineData("<p><br></p>")]
+    [InlineData("<p>   </p>")]
+    public void ToXml_ThrowsWhenSanitizedHtmlHasNoText(string input)
+    {
+        var exception = Assert.Throws<ArgumentException>(() => formatter.ToXml(input));
+
+        Assert.StartsWith("Оглавление не может быть пустым.", exception.Message);
+    }
+
+    [Theory]
+    [InlineData("<p>Глава 1</p>")]
+    [InlineData("<p><strong>Глава 1</strong> — <em>Введение</em></p>")]
+    public void ToXml_AllowsSanitizedHtmlWithRealText(string input)
+    {
+        var xml = formatter.ToXml(input);
+
+        Assert.Equal(input, XElement.Parse(xml).Value);
+    }
+
     [Fact]
     public void ToXml_RemovesAllAttributesIncludingEventHandlers()
     {
@@ -67,9 +88,9 @@ public sealed class TableOfContentsFormatterTests
     }
 
     [Theory]
-    [InlineData("<img src=\"https://example.com/image.jpg\">", "img")]
-    [InlineData("<a href=\"https://example.com\">Link</a>", "a")]
-    [InlineData("<table><tr><td>Cell</td></tr></table>", "table")]
+    [InlineData("<p>Safe</p><img src=\"https://example.com/image.jpg\">", "img")]
+    [InlineData("<p>Safe</p><a href=\"https://example.com\">Link</a>", "a")]
+    [InlineData("<p>Safe</p><table><tr><td>Cell</td></tr></table>", "table")]
     public void ToXml_RemovesTagsOutsideAllowlist(string input, string forbiddenTag)
     {
         var xml = formatter.ToXml(input);

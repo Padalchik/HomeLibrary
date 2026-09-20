@@ -14,7 +14,20 @@ ASP.NET Core MVC приложение «Домашняя библиотека» 
 docker compose up --build
 ```
 
+Команда автоматически:
+
+- запускает SQL Server;
+- создаёт и подготавливает базу данных;
+- применяет database migrations;
+- запускает web-приложение.
+
 Приложение будет доступно по адресу <http://localhost:18080>. Проверка состояния: <http://localhost:18080/health>.
+
+## Тесты
+
+```sh
+dotnet test HomeLibrary.sln --configuration Release
+```
 
 ## Локальная отладка
 

@@ -36,11 +36,35 @@ public sealed class BooksControllerTests
         Assert.Equal(book.PublicationYear, item.PublicationYear);
     }
 
+    [Fact]
+    public async Task Create_WhenSanitizedTableOfContentsIsEmpty_ReturnsFormWithValidationError()
+    {
+        var service = new FakeBookService();
+        var controller = new BooksController(service, new TableOfContentsFormatter());
+        var model = new BookCreateViewModel
+        {
+            Title = "Test book",
+            Author = "Test author",
+            PublicationYear = 2026,
+            TableOfContentsHtml = "<script>alert(1)</script>"
+        };
+
+        var result = await controller.Create(model);
+
+        var view = Assert.IsType<ViewResult>(result);
+        Assert.Same(model, view.Model);
+        var error = Assert.Single(controller.ModelState[nameof(model.TableOfContentsHtml)]!.Errors);
+        Assert.Equal("Оглавление не может быть пустым.", error.ErrorMessage);
+        Assert.False(service.CreateWasCalled);
+    }
+
     private sealed class FakeBookService : IBookService
     {
         public IReadOnlyCollection<Book> SearchResult { get; init; } = [];
 
         public string? LastSearch { get; private set; }
+
+        public bool CreateWasCalled { get; private set; }
 
         public Task<IReadOnlyCollection<Book>> SearchAsync(string? search)
         {
@@ -53,7 +77,11 @@ public sealed class BooksControllerTests
 
         public Task<Book?> GetByIdAsync(int id) => Task.FromResult<Book?>(null);
 
-        public Task<int> CreateAsync(CreateBookRequest request) => Task.FromResult(0);
+        public Task<int> CreateAsync(CreateBookRequest request)
+        {
+            CreateWasCalled = true;
+            return Task.FromResult(0);
+        }
 
         public Task<bool> UpdateAsync(UpdateBookRequest request) => Task.FromResult(false);
 
