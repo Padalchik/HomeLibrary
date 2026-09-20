@@ -19,7 +19,7 @@
     <dt>Год издания</dt>
     <dd>@Model.PublicationYear</dd>
     <dt>Оглавление</dt>
-    <dd><pre>@Model.TableOfContents</pre></dd>
+    <dd><div class="table-of-contents">@Html.Raw(Model.TableOfContentsHtml)</div></dd>
     <dt>Создано</dt>
     <dd>@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</dd>
     <dt>Изменено</dt>

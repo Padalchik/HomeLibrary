@@ -18,7 +18,7 @@ public sealed class BookCreateViewModel
     [Display(Name = "Год")]
     public int PublicationYear { get; set; }
 
-    [Required(ErrorMessage = "Укажите оглавление в формате XML.")]
+    [Required(ErrorMessage = "Укажите оглавление.")]
     [Display(Name = "Оглавление")]
-    public string TableOfContents { get; set; } = string.Empty;
+    public string TableOfContentsHtml { get; set; } = string.Empty;
 }

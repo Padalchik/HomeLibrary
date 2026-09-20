@@ -10,7 +10,7 @@ public sealed class BookDetailsViewModel
 
     public int PublicationYear { get; init; }
 
-    public string TableOfContents { get; init; } = string.Empty;
+    public string TableOfContentsHtml { get; init; } = string.Empty;
 
     public DateTime CreatedAt { get; init; }
 

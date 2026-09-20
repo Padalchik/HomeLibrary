@@ -1,10 +1,12 @@
 using HomeLibrary.Application.Books;
 using HomeLibrary.Infrastructure;
+using HomeLibrary.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddSingleton<ITableOfContentsFormatter, TableOfContentsFormatter>();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();

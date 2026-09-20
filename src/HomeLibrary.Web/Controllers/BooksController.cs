@@ -1,12 +1,15 @@
 using HomeLibrary.Application.Books;
 using HomeLibrary.Domain.Entities;
 using HomeLibrary.Web.Models.Books;
+using HomeLibrary.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HomeLibrary.Web.Controllers;
 
 [Route("books")]
-public sealed class BooksController(IBookService bookService) : Controller
+public sealed class BooksController(
+    IBookService bookService,
+    ITableOfContentsFormatter tableOfContentsFormatter) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> Index()
@@ -46,7 +49,7 @@ public sealed class BooksController(IBookService bookService) : Controller
             model.Title,
             model.Author,
             model.PublicationYear,
-            model.TableOfContents));
+            tableOfContentsFormatter.ToXml(model.TableOfContentsHtml)));
 
         return RedirectToAction(nameof(Details), new { id });
     }
@@ -66,7 +69,7 @@ public sealed class BooksController(IBookService bookService) : Controller
             Title = book.Title,
             Author = book.Author,
             PublicationYear = book.PublicationYear,
-            TableOfContents = book.TableOfContents
+            TableOfContentsHtml = tableOfContentsFormatter.FromXml(book.TableOfContents)
         });
     }
 
@@ -89,7 +92,7 @@ public sealed class BooksController(IBookService bookService) : Controller
             model.Title,
             model.Author,
             model.PublicationYear,
-            model.TableOfContents));
+            tableOfContentsFormatter.ToXml(model.TableOfContentsHtml)));
 
         return updated
             ? RedirectToAction(nameof(Details), new { id })
@@ -104,13 +107,13 @@ public sealed class BooksController(IBookService bookService) : Controller
         return deleted ? RedirectToAction(nameof(Index)) : NotFound();
     }
 
-    private static BookDetailsViewModel ToDetailsViewModel(Book book) => new()
+    private BookDetailsViewModel ToDetailsViewModel(Book book) => new()
     {
         Id = book.Id,
         Title = book.Title,
         Author = book.Author,
         PublicationYear = book.PublicationYear,
-        TableOfContents = book.TableOfContents,
+        TableOfContentsHtml = tableOfContentsFormatter.FromXml(book.TableOfContents),
         CreatedAt = book.CreatedAt,
         UpdatedAt = book.UpdatedAt
     };

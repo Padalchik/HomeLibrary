@@ -23,13 +23,24 @@
         <span asp-validation-for="PublicationYear" class="validation"></span>
     </div>
     <div class="field">
-        <label asp-for="TableOfContents"></label>
-        <textarea asp-for="TableOfContents" rows="12"
-                  placeholder="&lt;TableOfContents&gt;&#10;  &lt;Chapter&gt;Введение&lt;/Chapter&gt;&#10;&lt;/TableOfContents&gt;"></textarea>
-        <span asp-validation-for="TableOfContents" class="validation"></span>
+        <label asp-for="TableOfContentsHtml"></label>
+        <div class="table-of-contents-editor" data-html-editor>
+            <textarea asp-for="TableOfContentsHtml" rows="12" data-html-editor-input></textarea>
+            <div class="wysiwyg-editor" data-html-editor-surface hidden></div>
+        </div>
+        <span asp-validation-for="TableOfContentsHtml" class="validation"></span>
     </div>
     <div class="actions">
         <button class="button" type="submit">Сохранить</button>
         <a asp-action="Index">Отмена</a>
     </div>
 </form>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" />
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+    <script src="~/js/table-of-contents-editor.js" asp-append-version="true"></script>
+}
