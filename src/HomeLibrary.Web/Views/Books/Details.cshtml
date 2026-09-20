@@ -1,0 +1,27 @@
+@model HomeLibrary.Web.Models.Books.BookDetailsViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="page-heading">
+    <h1>@Model.Title</h1>
+    <div class="actions">
+        <a class="button secondary" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
+        <a asp-action="Index">К списку</a>
+    </div>
+</div>
+
+<dl class="book-details">
+    <dt>Название</dt>
+    <dd>@Model.Title</dd>
+    <dt>Автор</dt>
+    <dd>@Model.Author</dd>
+    <dt>Год издания</dt>
+    <dd>@Model.PublicationYear</dd>
+    <dt>Оглавление</dt>
+    <dd><pre>@Model.TableOfContents</pre></dd>
+    <dt>Создано</dt>
+    <dd>@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</dd>
+    <dt>Изменено</dt>
+    <dd>@Model.UpdatedAt.ToString("dd.MM.yyyy HH:mm")</dd>
+</dl>

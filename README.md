@@ -1,6 +1,6 @@
 # HomeLibrary
 
-Каркас приложения «Домашняя библиотека» на ASP.NET Core MVC и SQL Server 2022.
+ASP.NET Core MVC приложение «Домашняя библиотека» с SQL Server, Dapper и stored procedures.
 
 ## Prerequisites
 

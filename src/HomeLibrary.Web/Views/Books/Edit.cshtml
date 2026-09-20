@@ -1,0 +1,35 @@
+@model HomeLibrary.Web.Models.Books.BookEditViewModel
+@{
+    ViewData["Title"] = "Редактировать книгу";
+}
+
+<h1>Редактировать книгу</h1>
+
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post" class="book-form">
+    <input asp-for="Id" type="hidden" />
+    <div asp-validation-summary="ModelOnly" class="validation"></div>
+    <div class="field">
+        <label asp-for="Title"></label>
+        <input asp-for="Title" />
+        <span asp-validation-for="Title" class="validation"></span>
+    </div>
+    <div class="field">
+        <label asp-for="Author"></label>
+        <input asp-for="Author" />
+        <span asp-validation-for="Author" class="validation"></span>
+    </div>
+    <div class="field">
+        <label asp-for="PublicationYear"></label>
+        <input asp-for="PublicationYear" />
+        <span asp-validation-for="PublicationYear" class="validation"></span>
+    </div>
+    <div class="field">
+        <label asp-for="TableOfContents"></label>
+        <textarea asp-for="TableOfContents" rows="12"></textarea>
+        <span asp-validation-for="TableOfContents" class="validation"></span>
+    </div>
+    <div class="actions">
+        <button class="button" type="submit">Сохранить</button>
+        <a asp-action="Details" asp-route-id="@Model.Id">Отмена</a>
+    </div>
+</form>
